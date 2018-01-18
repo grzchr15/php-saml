@@ -1,12 +1,11 @@
 <?php
- 
 /**
  *  SAML Handler
  */
 
 session_start();
 
-require_once dirname(dirname(__FILE__)).'/_toolkit_loader.php';
+require_once dirname(__DIR__).'/_toolkit_loader.php';
 
 require_once 'settings.php';
 
@@ -28,17 +27,22 @@ if (isset($_GET['sso'])) {
     $auth->login($returnTo);
 } else if (isset($_GET['slo'])) {
     $returnTo = null;
-    $paramters = array();
+    $parameters = array();
     $nameId = null;
     $sessionIndex = null;
+    $nameIdFormat = null;
+
     if (isset($_SESSION['samlNameId'])) {
         $nameId = $_SESSION['samlNameId'];
     }
     if (isset($_SESSION['samlSessionIndex'])) {
         $sessionIndex = $_SESSION['samlSessionIndex'];
     }
+    if (isset($_SESSION['samlNameIdFormat'])) {
+        $nameIdFormat = $_SESSION['samlNameIdFormat'];
+    }
 
-    $auth->logout($returnTo, $paramters, $nameId, $sessionIndex);
+    $auth->logout($returnTo, $parameters, $nameId, $sessionIndex, false, $nameIdFormat);
 
     # If LogoutRequest ID need to be saved in order to later validate it, do instead
     # $sloBuiltUrl = $auth->logout(null, $paramters, $nameId, $sessionIndex, true);
@@ -60,7 +64,7 @@ if (isset($_GET['sso'])) {
     $errors = $auth->getErrors();
 
     if (!empty($errors)) {
-        print_r('<p>'.implode(', ', $errors).'</p>');
+        echo '<p>',implode(', ', $errors),'</p>';
     }
 
     if (!$auth->isAuthenticated()) {
@@ -70,6 +74,7 @@ if (isset($_GET['sso'])) {
 
     $_SESSION['samlUserdata'] = $auth->getAttributes();
     $_SESSION['samlNameId'] = $auth->getNameId();
+    $_SESSION['samlNameIdFormat'] = $auth->getNameIdFormat();
     $_SESSION['samlSessionIndex'] = $auth->getSessionIndex();
     unset($_SESSION['AuthNRequestID']);
     if (isset($_POST['RelayState']) && OneLogin_Saml2_Utils::getSelfURL() != $_POST['RelayState']) {
@@ -85,9 +90,9 @@ if (isset($_GET['sso'])) {
     $auth->processSLO(false, $requestID);
     $errors = $auth->getErrors();
     if (empty($errors)) {
-        print_r('<p>Sucessfully logged out</p>');
+        echo '<p>Sucessfully logged out</p>';
     } else {
-        print_r('<p>'.implode(', ', $errors).'</p>');
+        echo '<p>', implode(', ', $errors), '</p>';
     }
 }
 

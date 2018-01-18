@@ -114,6 +114,8 @@ REQUESTEDAUTHN;
             }
         }
 
+        $spEntityId = htmlspecialchars($spData['entityId'], ENT_QUOTES);
+        $acsUrl = htmlspecialchars($spData['assertionConsumerService']['url'], ENT_QUOTES);
         $request = <<<AUTHNREQUEST
 <samlp:AuthnRequest
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
@@ -123,9 +125,9 @@ REQUESTEDAUTHN;
 {$providerNameStr}{$forceAuthnStr}{$isPassiveStr}
     IssueInstant="$issueInstant"
     Destination="{$idpData['singleSignOnService']['url']}"
-    ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
-    AssertionConsumerServiceURL="{$spData['assertionConsumerService']['url']}">
-    <saml:Issuer>{$spData['entityId']}</saml:Issuer>
+    ProtocolBinding="{$spData['assertionConsumerService']['binding']}"
+    AssertionConsumerServiceURL="{$acsUrl}">
+    <saml:Issuer>{$spEntityId}</saml:Issuer>
 {$nameIdPolicyStr}
 {$requestedAuthnStr}
 </samlp:AuthnRequest>
@@ -138,11 +140,21 @@ AUTHNREQUEST;
     /**
      * Returns deflated, base64 encoded, unsigned AuthnRequest.
      *
+     * @param bool|null $deflate Whether or not we should 'gzdeflate' the request body before we return it.
      */
-    public function getRequest()
+    public function getRequest($deflate = null)
     {
-        $deflatedRequest = gzdeflate($this->_authnRequest);
-        $base64Request = base64_encode($deflatedRequest);
+        $subject = $this->_authnRequest;
+
+        if (is_null($deflate)) {
+            $deflate = $this->_settings->shouldCompressRequests();
+        }
+
+        if ($deflate) {
+            $subject = gzdeflate($this->_authnRequest);
+        }
+
+        $base64Request = base64_encode($subject);
         return $base64Request;
     }
 
@@ -154,5 +166,15 @@ AUTHNREQUEST;
     public function getId()
     {
         return $this->_id;
+    }
+
+    /**
+     * Returns the XML that will be sent as part of the request
+     *
+     * @return string
+     */
+    public function getXML()
+    {
+        return $this->_authnRequest;
     }
 }
