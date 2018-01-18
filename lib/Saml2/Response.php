@@ -1,45 +1,65 @@
 <?php
+/**
+ * This file is part of php-saml.
+ *
+ * (c) OneLogin Inc
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package OneLogin
+ * @author  OneLogin Inc <saml-info@onelogin.com>
+ * @license MIT https://github.com/onelogin/php-saml/blob/master/LICENSE
+ * @link    https://github.com/onelogin/php-saml
+ */
+
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+use RobRichards\XMLSecLibs\XMLSecEnc;
 
 /**
  * SAML 2 Authentication Response
- *
  */
-
 class OneLogin_Saml2_Response
 {
 
     /**
      * Settings
+     *
      * @var OneLogin_Saml2_Settings
      */
     protected $_settings;
 
     /**
      * The decoded, unprocessed XML response provided to the constructor.
+     *
      * @var string
      */
     public $response;
 
     /**
      * A DOMDocument class loaded from the SAML Response.
+     *
      * @var DomDocument
      */
     public $document;
 
     /**
      * A DOMDocument class loaded from the SAML Response (Decrypted).
+     *
      * @var DomDocument
      */
     public $decryptedDocument;
 
     /**
      * The response contains an encrypted assertion.
+     *
      * @var bool
      */
     public $encrypted = false;
 
     /**
      * After validation, if it fail this var has the cause of the problem
+     *
      * @var string
      */
     private $_error;
@@ -84,7 +104,7 @@ class OneLogin_Saml2_Response
         if ($encryptedAssertionNodes->length !== 0) {
             $this->decryptedDocument = clone $this->document;
             $this->encrypted = true;
-            $this->decryptedDocument = $this->_decryptAssertion($this->decryptedDocument);
+            $this->decryptedDocument = $this->decryptAssertion($this->decryptedDocument);
         }
     }
 
@@ -152,7 +172,7 @@ class OneLogin_Saml2_Response
                         );
                     }
 
-                    # If encrypted, check also the decrypted document
+                    // If encrypted, check also the decrypted document
                     if ($this->encrypted) {
                         $res = OneLogin_Saml2_Utils::validateXML($this->decryptedDocument, 'saml-schema-protocol-2.0.xsd', $this->_settings->isDebugActive());
                         if (!$res instanceof DOMDocument) {
@@ -380,7 +400,7 @@ class OneLogin_Saml2_Response
                     $multiCerts = $idpData['x509certMulti']['signing'];
                 }
 
-                # If find a Signature on the Response, validates it checking the original response
+                // If find a Signature on the Response, validates it checking the original response
                 if ($hasSignedResponse && !OneLogin_Saml2_Utils::validateSign($this->document, $cert, $fingerprint, $fingerprintalg, OneLogin_Saml2_Utils::RESPONSE_SIGNATURE_XPATH, $multiCerts)) {
                     throw new OneLogin_Saml2_ValidationError(
                         "Signature validation failed. SAML Response rejected",
@@ -388,7 +408,7 @@ class OneLogin_Saml2_Response
                     );
                 }
 
-                # If find a Signature on the Assertion (decrypted assertion if was encrypted)
+                // If find a Signature on the Assertion (decrypted assertion if was encrypted)
                 $documentToCheckAssertion = $this->encrypted ? $this->decryptedDocument : $this->document;
                 if ($hasSignedAssertion && !OneLogin_Saml2_Utils::validateSign($documentToCheckAssertion, $cert, $fingerprint, $fingerprintalg, OneLogin_Saml2_Utils::ASSERTION_SIGNATURE_XPATH, $multiCerts)) {
                     throw new OneLogin_Saml2_ValidationError(
@@ -471,11 +491,11 @@ class OneLogin_Saml2_Response
         }
     }
 
-   /**
-    * Checks that the samlp:Response/saml:Assertion/saml:Conditions element exists and is unique.
-    *
-    * @return boolean true if the Conditions element exists and is unique
-    */
+    /**
+     * Checks that the samlp:Response/saml:Assertion/saml:Conditions element exists and is unique.
+     *
+     * @return boolean true if the Conditions element exists and is unique
+     */
     public function checkOneCondition()
     {
         $entries = $this->_queryAssertion("/saml:Conditions");
@@ -486,11 +506,11 @@ class OneLogin_Saml2_Response
         }
     }
 
-   /**
-    * Checks that the samlp:Response/saml:Assertion/saml:AuthnStatement element exists and is unique.
-    *
-    * @return boolean true if the AuthnStatement element exists and is unique
-    */
+    /**
+     * Checks that the samlp:Response/saml:Assertion/saml:AuthnStatement element exists and is unique.
+     *
+     * @return boolean true if the AuthnStatement element exists and is unique
+     */
     public function checkOneAuthnStatement()
     {
         $entries = $this->_queryAssertion("/saml:AuthnStatement");
@@ -689,7 +709,6 @@ class OneLogin_Saml2_Response
      *
      * @return string|null The SessionIndex value
      */
-
     public function getSessionIndex()
     {
         $sessionIndex = null;
@@ -725,7 +744,7 @@ class OneLogin_Saml2_Response
 
         $entries = $this->_queryAssertion('/saml:AttributeStatement/saml:Attribute');
 
-        /** @var $entry DOMNode */
+        // @var $entry DOMNode
         foreach ($entries as $entry) {
             $attributeName = $entry->attributes->getNamedItem('Name')->nodeValue;
 
@@ -800,7 +819,7 @@ class OneLogin_Saml2_Response
                 );
             }
 
-            # Check that reference URI matches the parent ID and no duplicate References or IDs
+            // Check that reference URI matches the parent ID and no duplicate References or IDs
             $idValue = $signNode->parentNode->getAttribute('ID');
             if (empty($idValue)) {
                 throw new OneLogin_Saml2_ValidationError(
@@ -896,6 +915,8 @@ class OneLogin_Saml2_Response
     /**
      * Verifies that the document has the expected signed nodes.
      *
+     * @param array $signedElements Signed elements
+     *
      * @return bool
      */
     public function validateSignedElements($signedElements)
@@ -908,9 +929,9 @@ class OneLogin_Saml2_Response
         $assertionTag = '{'.OneLogin_Saml2_Constants::NS_SAML.'}Assertion';
 
         $ocurrence = array_count_values($signedElements);
-        if ((in_array($responseTag, $signedElements) && $ocurrence[$responseTag] > 1) ||
-            (in_array($assertionTag, $signedElements) && $ocurrence[$assertionTag] > 1) ||
-            !in_array($responseTag, $signedElements) && !in_array($assertionTag, $signedElements)
+        if ((in_array($responseTag, $signedElements) && $ocurrence[$responseTag] > 1)
+            || (in_array($assertionTag, $signedElements) && $ocurrence[$assertionTag] > 1)
+            || !in_array($responseTag, $signedElements) && !in_array($assertionTag, $signedElements)
         ) {
             return false;
         }
@@ -1018,7 +1039,7 @@ class OneLogin_Saml2_Response
      *
      * @throws Exception
      */
-    protected function _decryptAssertion($dom)
+    protected function decryptAssertion($dom)
     {
         $pem = $this->_settings->getSPkey();
 
@@ -1071,13 +1092,13 @@ class OneLogin_Saml2_Response
             $encryptedAssertion = $decrypted->parentNode;
             $container = $encryptedAssertion->parentNode;
 
-            # Fix possible issue with saml namespace
-            if (!$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml') &&
-              !$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml2') &&
-              !$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns') &&
-              !$container->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml') &&
-              !$container->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml2')
-              ) {
+            // Fix possible issue with saml namespace
+            if (!$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml')
+                && !$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml2')
+                && !$decrypted->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns')
+                && !$container->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml')
+                && !$container->hasAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:saml2')
+            ) {
                 if (strpos($encryptedAssertion->tagName, 'saml2:') !== false) {
                     $ns = 'xmlns:saml2';
                 } else if (strpos($encryptedAssertion->tagName, 'saml:') !== false) {
@@ -1095,16 +1116,17 @@ class OneLogin_Saml2_Response
         }
     }
 
-    /* After execute a validation process, if fails this method returns the cause
+    /**
+     * After execute a validation process, if fails this method returns the cause
      *
-     * @return string Cause 
+     * @return string Cause
      */
     public function getError()
     {
         return $this->_error;
     }
 
-    /*
+    /**
      * Returns the SAML Response document (If contains an encrypted assertion, decrypts it)
      *
      * @return DomDocument SAML Response

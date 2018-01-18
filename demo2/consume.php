@@ -7,7 +7,8 @@
  * link where it will send a certified response via $_POST.
  */
 
-require_once '../_toolkit_loader.php';
+
+require_once dirname(__DIR__).'/_toolkit_loader.php';
 
 try {
     if (isset($_POST['SAMLResponse'])) {

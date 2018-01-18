@@ -1,23 +1,34 @@
 <?php
+/**
+ * This file is part of php-saml.
+ *
+ * (c) OneLogin Inc
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package OneLogin
+ * @author  OneLogin Inc <saml-info@onelogin.com>
+ * @license MIT https://github.com/onelogin/php-saml/blob/master/LICENSE
+ * @link    https://github.com/onelogin/php-saml
+ */
 
 /**
  * IdP Metadata Parser of OneLogin PHP Toolkit
- *
  */
-
 class OneLogin_Saml2_IdPMetadataParser
 {
     /**
      * Get IdP Metadata Info from URL
      *
-     * @param string $url                   URL where the IdP metadata is published
-     * @param string $entityId              Entity Id of the desired IdP, if no
-     *                                      entity Id is provided and the XML
-     *                                      metadata contains more than one
-     *                                      IDPSSODescriptor, the first is returned
-     * @param string $desiredNameIdFormat   If available on IdP metadata, use that nameIdFormat
-     * @param string $desiredSSOBinding     Parse specific binding SSO endpoint.
-     * @param string $desiredSLOBinding     Parse specific binding SLO endpoint.
+     * @param string $url                 URL where the IdP metadata is published
+     * @param string $entityId            Entity Id of the desired IdP, if no
+     *                                    entity Id is provided and the XML
+     *                                    metadata contains more than one
+     *                                    IDPSSODescriptor, the first is returned
+     * @param string $desiredNameIdFormat If available on IdP metadata, use that nameIdFormat
+     * @param string $desiredSSOBinding   Parse specific binding SSO endpoint
+     * @param string $desiredSLOBinding   Parse specific binding SLO endpoint
      *
      * @return array metadata info in php-saml settings format
      */
@@ -47,14 +58,14 @@ class OneLogin_Saml2_IdPMetadataParser
     /**
      * Get IdP Metadata Info from File
      *
-     * @param string $filepath              File path
-     * @param string $entityId              Entity Id of the desired IdP, if no
-     *                                      entity Id is provided and the XML
-     *                                      metadata contains more than one
-     *                                      IDPSSODescriptor, the first is returned
-     * @param string $desiredNameIdFormat   If available on IdP metadata, use that nameIdFormat
-     * @param string $desiredSSOBinding     Parse specific binding SSO endpoint.
-     * @param string $desiredSLOBinding     Parse specific binding SLO endpoint.
+     * @param string $filepath            File path
+     * @param string $entityId            Entity Id of the desired IdP, if no
+     *                                    entity Id is provided and the XML
+     *                                    metadata contains more than one
+     *                                    IDPSSODescriptor, the first is returned
+     * @param string $desiredNameIdFormat If available on IdP metadata, use that nameIdFormat
+     * @param string $desiredSSOBinding   Parse specific binding SSO endpoint
+     * @param string $desiredSLOBinding   Parse specific binding SLO endpoint
      *
      * @return array metadata info in php-saml settings format
      */
@@ -75,14 +86,14 @@ class OneLogin_Saml2_IdPMetadataParser
     /**
      * Get IdP Metadata Info from URL
      *
-     * @param string $xml                   XML that contains IdP metadata
-     * @param string $entityId              Entity Id of the desired IdP, if no
-     *                                      entity Id is provided and the XML
-     *                                      metadata contains more than one
-     *                                      IDPSSODescriptor, the first is returned
-     * @param string $desiredNameIdFormat   If available on IdP metadata, use that nameIdFormat
-     * @param string $desiredSSOBinding     Parse specific binding SSO endpoint.
-     * @param string $desiredSLOBinding     Parse specific binding SLO endpoint.
+     * @param string $xml                 XML that contains IdP metadata
+     * @param string $entityId            Entity Id of the desired IdP, if no
+     *                                    entity Id is provided and the XML
+     *                                    metadata contains more than one
+     *                                    IDPSSODescriptor, the first is returned
+     * @param string $desiredNameIdFormat If available on IdP metadata, use that nameIdFormat
+     * @param string $desiredSSOBinding   Parse specific binding SSO endpoint
+     * @param string $desiredSLOBinding   Parse specific binding SLO endpoint
      *
      * @return array metadata info in php-saml settings format
      * @throws \Exception
@@ -162,8 +173,8 @@ class OneLogin_Saml2_IdPMetadataParser
 
                     $idpCertdata = $metadataInfo['idp']['x509certMulti'];
                     if ((count($idpCertdata) == 1 and
-                        ((isset($idpCertdata['signing']) and count($idpCertdata['signing']) == 1) or (isset($idpCertdata['encryption']) and count($idpCertdata['encryption']) == 1))) or
-                        ((isset($idpCertdata['signing']) && count($idpCertdata['signing']) == 1) && isset($idpCertdata['encryption']) && count($idpCertdata['encryption']) == 1 && strcmp($idpCertdata['signing'][0], $idpCertdata['encryption'][0]) == 0)) {
+                         ((isset($idpCertdata['signing']) and count($idpCertdata['signing']) == 1) or (isset($idpCertdata['encryption']) and count($idpCertdata['encryption']) == 1))) or
+                         ((isset($idpCertdata['signing']) && count($idpCertdata['signing']) == 1) && isset($idpCertdata['encryption']) && count($idpCertdata['encryption']) == 1 && strcmp($idpCertdata['signing'][0], $idpCertdata['encryption'][0]) == 0)) {
                         if (isset($metadataInfo['idp']['x509certMulti']['signing'][0])) {
                             $metadataInfo['idp']['x509cert'] = $metadataInfo['idp']['x509certMulti']['signing'][0];
                         } else {
@@ -196,8 +207,8 @@ class OneLogin_Saml2_IdPMetadataParser
     /**
      * Inject metadata info into php-saml settings array
      *
-     * @param array $settings      php-saml settings array
-     * @param array $metadataInfo  array metadata info
+     * @param array $settings     php-saml settings array
+     * @param array $metadataInfo array metadata info
      *
      * @return array settings
      */

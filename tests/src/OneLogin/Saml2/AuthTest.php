@@ -1,16 +1,18 @@
 <?php
 
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+
 /**
  * Unit tests for Auth class
  */
-class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
+class OneLogin_Saml2_AuthTest extends \PHPUnit\Framework\TestCase
 {
     private $_auth;
     private $_settingsInfo;
 
     /**
-    * Initializes the Test Suite
-    */
+     * Initializes the Test Suite
+     */
     public function setUp()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -21,13 +23,13 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getSettings method of the OneLogin_Saml2_Auth class
-    * Build a OneLogin_Saml2_Settings object with a setting array
-    * and compare the value returned from the method of the
-    * $auth object
-    *
-    * @covers OneLogin_Saml2_Auth::getSettings
-    */
+     * Tests the getSettings method of the OneLogin_Saml2_Auth class
+     * Build a OneLogin_Saml2_Settings object with a setting array
+     * and compare the value returned from the method of the
+     * $auth object
+     *
+     * @covers OneLogin_Saml2_Auth::getSettings
+     */
     public function testGetSettings()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -40,10 +42,10 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getLastRequestID method of the OneLogin_Saml2_Auth class
-    *
-    * @covers OneLogin_Saml2_Auth::getLastRequestID
-    */
+     * Tests the getLastRequestID method of the OneLogin_Saml2_Auth class
+     *
+     * @covers OneLogin_Saml2_Auth::getLastRequestID
+     */
     public function testGetLastRequestID()
     {
         $targetSSOURL = $this->_auth->login(null, array(), false, false, true, false, false);
@@ -58,10 +60,10 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getSSOurl method of the OneLogin_Saml2_Auth class
-    *
-    * @covers OneLogin_Saml2_Auth::getSSOurl
-    */
+     * Tests the getSSOurl method of the OneLogin_Saml2_Auth class
+     *
+     * @covers OneLogin_Saml2_Auth::getSSOurl
+     */
     public function testGetSSOurl()
     {
         $ssoUrl = $this->_settingsInfo['idp']['singleSignOnService']['url'];
@@ -69,10 +71,10 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getSLOurl method of the OneLogin_Saml2_Auth class
-    *
-    * @covers OneLogin_Saml2_Auth::getSLOurl
-    */
+     * Tests the getSLOurl method of the OneLogin_Saml2_Auth class
+     *
+     * @covers OneLogin_Saml2_Auth::getSLOurl
+     */
     public function testGetSLOurl()
     {
         $sloUrl = $this->_settingsInfo['idp']['singleLogoutService']['url'];
@@ -80,11 +82,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processResponse method of the OneLogin_Saml2_Auth class
-    * Case No Response, An exception is throw
-    *
-    * @covers OneLogin_Saml2_Auth::processResponse
-    */
+     * Tests the processResponse method of the OneLogin_Saml2_Auth class
+     * Case No Response, An exception is throw
+     *
+     * @covers OneLogin_Saml2_Auth::processResponse
+     */
     public function testProcessNoResponse()
     {
         try {
@@ -98,22 +100,22 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processResponse method of the OneLogin_Saml2_Auth class
-    * Case Invalid Response, After processing the response the user
-    * is not authenticated, attributes are notreturned, no nameID and
-    * the error array is not empty, contains 'invalid_response
-    *
-    * @covers OneLogin_Saml2_Auth::processResponse
-    * @covers OneLogin_Saml2_Auth::isAuthenticated
-    * @covers OneLogin_Saml2_Auth::getAttributes
-    * @covers OneLogin_Saml2_Auth::getAttribute
-    * @covers OneLogin_Saml2_Auth::getNameId
-    * @covers OneLogin_Saml2_Auth::getNameIdFormat
-    * @covers OneLogin_Saml2_Auth::getErrors
-    * @covers OneLogin_Saml2_Auth::getSessionIndex
-    * @covers OneLogin_Saml2_Auth::getSessionExpiration
-    * @covers OneLogin_Saml2_Auth::getLastErrorReason
-    */
+     * Tests the processResponse method of the OneLogin_Saml2_Auth class
+     * Case Invalid Response, After processing the response the user
+     * is not authenticated, attributes are notreturned, no nameID and
+     * the error array is not empty, contains 'invalid_response
+     *
+     * @covers OneLogin_Saml2_Auth::processResponse
+     * @covers OneLogin_Saml2_Auth::isAuthenticated
+     * @covers OneLogin_Saml2_Auth::getAttributes
+     * @covers OneLogin_Saml2_Auth::getAttribute
+     * @covers OneLogin_Saml2_Auth::getNameId
+     * @covers OneLogin_Saml2_Auth::getNameIdFormat
+     * @covers OneLogin_Saml2_Auth::getErrors
+     * @covers OneLogin_Saml2_Auth::getSessionIndex
+     * @covers OneLogin_Saml2_Auth::getSessionExpiration
+     * @covers OneLogin_Saml2_Auth::getLastErrorReason
+     */
     public function testProcessResponseInvalid()
     {
         $message = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -133,11 +135,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processResponse method of the OneLogin_Saml2_Auth class
-    * Case Invalid Response, Invalid requestID
-    *
-    * @covers OneLogin_Saml2_Auth::processResponse
-    */
+     * Tests the processResponse method of the OneLogin_Saml2_Auth class
+     * Case Invalid Response, Invalid requestID
+     *
+     * @covers OneLogin_Saml2_Auth::processResponse
+     */
     public function testProcessResponseInvalidRequestId()
     {
         $message = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response.xml.base64');
@@ -163,21 +165,21 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processResponse method of the OneLogin_Saml2_Auth class
-    * Case Valid Response, After processing the response the user
-    * is authenticated, attributes are returned, also has a nameID and
-    * the error array is empty
-    *
-    * @covers OneLogin_Saml2_Auth::processResponse
-    * @covers OneLogin_Saml2_Auth::isAuthenticated
-    * @covers OneLogin_Saml2_Auth::getAttributes
-    * @covers OneLogin_Saml2_Auth::getAttribute
-    * @covers OneLogin_Saml2_Auth::getNameId
-    * @covers OneLogin_Saml2_Auth::getNameIdFormat
-    * @covers OneLogin_Saml2_Auth::getSessionIndex
-    * @covers OneLogin_Saml2_Auth::getSessionExpiration
-    * @covers OneLogin_Saml2_Auth::getErrors
-    */
+     * Tests the processResponse method of the OneLogin_Saml2_Auth class
+     * Case Valid Response, After processing the response the user
+     * is authenticated, attributes are returned, also has a nameID and
+     * the error array is empty
+     *
+     * @covers OneLogin_Saml2_Auth::processResponse
+     * @covers OneLogin_Saml2_Auth::isAuthenticated
+     * @covers OneLogin_Saml2_Auth::getAttributes
+     * @covers OneLogin_Saml2_Auth::getAttribute
+     * @covers OneLogin_Saml2_Auth::getNameId
+     * @covers OneLogin_Saml2_Auth::getNameIdFormat
+     * @covers OneLogin_Saml2_Auth::getSessionIndex
+     * @covers OneLogin_Saml2_Auth::getSessionExpiration
+     * @covers OneLogin_Saml2_Auth::getErrors
+     */
     public function testProcessResponseValid()
     {
         $message = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -199,14 +201,16 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the redirectTo method of the OneLogin_Saml2_Auth class
-    * (phpunit raises an exception when a redirect is executed, the
-    * exception is catched and we check that the targetURL is correct)
-    * Case redirect without url parameter
-    *
-    * @covers OneLogin_Saml2_Auth::redirectTo
-    * @runInSeparateProcess
-    */
+     * Tests the redirectTo method of the OneLogin_Saml2_Auth class
+     * (phpunit raises an exception when a redirect is executed, the
+     * exception is catched and we check that the targetURL is correct)
+     * Case redirect without url parameter
+     *
+     * @covers OneLogin_Saml2_Auth::redirectTo
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testRedirectTo()
     {
         try {
@@ -226,14 +230,16 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the redirectTo method of the OneLogin_Saml2_Auth class
-    * (phpunit raises an exception when a redirect is executed, the
-    * exception is catched and we check that the targetURL is correct)
-    * Case redirect with url parameter
-    *
-    * @covers OneLogin_Saml2_Auth::redirectTo
-    * @runInSeparateProcess
-    */
+     * Tests the redirectTo method of the OneLogin_Saml2_Auth class
+     * (phpunit raises an exception when a redirect is executed, the
+     * exception is catched and we check that the targetURL is correct)
+     * Case redirect with url parameter
+     *
+     * @covers OneLogin_Saml2_Auth::redirectTo
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testRedirectTowithUrl()
     {
         try {
@@ -254,11 +260,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case No Message, An exception is throw
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case No Message, An exception is throw
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessNoSLO()
     {
         try {
@@ -272,11 +278,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Invalid Logout Response
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Invalid Logout Response
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessSLOResponseInvalid()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/logout_response_deflated.xml.base64');
@@ -296,11 +302,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Logout Response not sucess
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Logout Response not sucess
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessSLOResponseNoSucess()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/invalids/status_code_responder.xml.base64');
@@ -319,11 +325,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Logout Response with valid and invalid Request ID
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Logout Response with valid and invalid Request ID
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessSLOResponseRequestId()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/logout_response_deflated.xml.base64');
@@ -347,11 +353,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Valid Logout Response
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Valid Logout Response
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessSLOResponseValid()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/logout_response_deflated.xml.base64');
@@ -380,11 +386,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Valid Logout Response, validating deleting the local session
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Valid Logout Response, validating deleting the local session
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     */
     public function testProcessSLOResponseValidDeletingSession()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/logout_response_deflated.xml.base64');
@@ -425,7 +431,7 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
         }
         $_SESSION['samltest'] = true;
 
-        $callback = function() {
+        $callback = function () {
             $_SESSION['samltest'] = false;
         };
 
@@ -447,65 +453,53 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Invalid Logout Request
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    * @runInSeparateProcess
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Invalid Logout Request
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testProcessSLORequestInvalidValid()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_requests/logout_request_deflated.xml.base64');
         $_GET['SAMLRequest'] = $message;
 
-        try {
-            // The Header of the redirect produces an Exception
-            $this->_auth->processSLO(true);
-            // Do not ever get here
-            $this->assertFalse(true);
-        } catch (Exception $e) {
-            $this->assertContains('Cannot modify header information', $e->getMessage());
-            $trace = $e->getTrace();
-            $targetUrl = getUrlFromRedirect($trace);
-            $parsedQuery = getParamsFromUrl($targetUrl);
+        $targetUrl = $this->_auth->processSLO(true, null, false, null, true);
+        $parsedQuery = getParamsFromUrl($targetUrl);
 
-            $this->assertEmpty($this->_auth->getErrors());
-            $sloUrl = $this->_settingsInfo['idp']['singleLogoutService']['url'];
-            $this->assertContains($sloUrl, $targetUrl);
-            $this->assertArrayHasKey('SAMLResponse', $parsedQuery);
-            $this->assertArrayNotHasKey('RelayState', $parsedQuery);
-        }
+        $this->assertEmpty($this->_auth->getErrors());
+        $sloUrl = $this->_settingsInfo['idp']['singleLogoutService']['url'];
+        $this->assertContains($sloUrl, $targetUrl);
+        $this->assertArrayHasKey('SAMLResponse', $parsedQuery);
+        $this->assertArrayNotHasKey('RelayState', $parsedQuery);
 
         $this->_auth->setStrict(true);
         $this->_auth->processSLO(true);
         // Fail due destination missmatch
         $this->assertEquals($this->_auth->getErrors(), array('invalid_logout_request'));
 
-        try {
-            $this->_auth->setStrict(false);
-            $this->_auth->processSLO(true);
-            $this->assertFalse(true);
-        } catch (Exception $e) {
-            $this->assertContains('Cannot modify header information', $e->getMessage());
-            $trace = $e->getTrace();
-            $targetUrl = getUrlFromRedirect($trace);
-            $parsedQuery = getParamsFromUrl($targetUrl);
+        $this->_auth->setStrict(false);
+        $targetUrl = $this->_auth->processSLO(true, null, false, null, true);
+        $parsedQuery = getParamsFromUrl($targetUrl);
 
-            $this->assertEmpty($this->_auth->getErrors());
-            $sloUrl = $this->_settingsInfo['idp']['singleLogoutService']['url'];
-            $this->assertContains($sloUrl, $targetUrl);
-            $this->assertArrayHasKey('SAMLResponse', $parsedQuery);
-            $this->assertArrayNotHasKey('RelayState', $parsedQuery);
-        }
+        $this->assertEmpty($this->_auth->getErrors());
+        $sloUrl = $this->_settingsInfo['idp']['singleLogoutService']['url'];
+        $this->assertContains($sloUrl, $targetUrl);
+        $this->assertArrayHasKey('SAMLResponse', $parsedQuery);
+        $this->assertArrayNotHasKey('RelayState', $parsedQuery);
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Logout Request NotOnOrAfter failed
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    */
-
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Logout Request NotOnOrAfter failed
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testProcessSLORequestNotOnOrAfterFailed()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_requests/invalids/not_after_failed.xml.base64');
@@ -524,13 +518,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Valid Logout Request, validating that the local session is deleted,
-    * a LogoutResponse is created and a redirection executed
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    * @runInSeparateProcess
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Valid Logout Request, validating that the local session is deleted,
+     * a LogoutResponse is created and a redirection executed
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testProcessSLORequestDeletingSession()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_requests/logout_request_deflated.xml.base64');
@@ -592,11 +588,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests the processSLO method of the OneLogin_Saml2_Auth class
-     * Case Valid Logout Request, validating that the local session is deleted with callback,
-     * a LogoutResponse is created and a redirection executed
+     * Case Valid Logout Request, validating that the local session is
+     * deleted with callback, a LogoutResponse is created and
+     * a redirection executed
      *
      * @covers OneLogin_Saml2_Auth::processSLO
+     *
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testProcessSLORequestDeletingSessionCallback()
     {
@@ -615,7 +614,7 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
         }
         $_SESSION['samltest'] = true;
 
-        $callback = function() {
+        $callback = function () {
             $_SESSION['samltest'] = false;
         };
 
@@ -647,13 +646,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Valid Logout Request, validating the relayState,
-    * a LogoutResponse is created and a redirection executed
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    * @runInSeparateProcess
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Valid Logout Request, validating the relayState,
+     * a LogoutResponse is created and a redirection executed
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testProcessSLORequestRelayState()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_requests/logout_request_deflated.xml.base64');
@@ -686,13 +687,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the processSLO method of the OneLogin_Saml2_Auth class
-    * Case Valid Logout Request, validating the relayState,
-    * a signed LogoutResponse is created and a redirection executed
-    *
-    * @covers OneLogin_Saml2_Auth::processSLO
-    * @runInSeparateProcess
-    */
+     * Tests the processSLO method of the OneLogin_Saml2_Auth class
+     * Case Valid Logout Request, validating the relayState,
+     * a signed LogoutResponse is created and a redirection executed
+     *
+     * @covers OneLogin_Saml2_Auth::processSLO
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testProcessSLORequestSignedResponse()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -735,12 +738,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with no parameters. An AuthnRequest is built an redirection executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with no parameters. An AuthnRequest is built an redirection executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogin()
     {
         try {
@@ -763,13 +768,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with relayState. An AuthnRequest is built. GET with SAMLRequest,
-    * and RelayState. A redirection is executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with relayState. An AuthnRequest is built. GET with SAMLRequest,
+     * and RelayState. A redirection is executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginWithRelayState()
     {
         try {
@@ -793,13 +800,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with $elaySate and $parameters. An AuthnRequest is built. GET with
-    * SAMLRequest, RelayState and extra parameters in the GET. A redirection is executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with $elaySate and $parameters. An AuthnRequest is built. GET with
+     * SAMLRequest, RelayState and extra parameters in the GET. A redirection is executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginWithRelayStateAndParameters()
     {
         try {
@@ -829,12 +838,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login signed. An AuthnRequest signed is built an redirect executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login signed. An AuthnRequest signed is built an redirect executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginSigned()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -868,12 +879,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with no parameters. A AuthN Request is built with ForceAuthn and redirect executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with no parameters. A AuthN Request is built with ForceAuthn and redirect executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginForceAuthN()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -950,12 +963,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with no parameters. A AuthN Request is built with IsPassive and redirect executed
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with no parameters. A AuthN Request is built with IsPassive and redirect executed
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginIsPassive()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -1030,12 +1045,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the login method of the OneLogin_Saml2_Auth class
-    * Case Login with no parameters. A AuthN Request is built with and without NameIDPolicy
-    *
-    * @covers OneLogin_Saml2_Auth::login
-    * @runInSeparateProcess
-    */
+     * Tests the login method of the OneLogin_Saml2_Auth class
+     * Case Login with no parameters. A AuthN Request is built with and without NameIDPolicy
+     *
+     * @covers OneLogin_Saml2_Auth::login
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLoginNameIDPolicy()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -1108,12 +1125,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case Logout with no parameters. A logout Request is built and redirect executed
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case Logout with no parameters. A logout Request is built and redirect executed
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogout()
     {
         try {
@@ -1136,13 +1155,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case Logout with relayState. A logout Request is build. GET with SAMLRequest,
-    * RelayState. A redirection is executed
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case Logout with relayState. A logout Request is build. GET with SAMLRequest,
+     * RelayState. A redirection is executed
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogoutWithRelayState()
     {
         try {
@@ -1166,13 +1187,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case Logout with relayState + parameters. A logout Request is build. GET with SAMLRequest,
-    * RelayState and extra parameters. A redirection is executed
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case Logout with relayState + parameters. A logout Request is build. GET with SAMLRequest,
+     * RelayState and extra parameters. A redirection is executed
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogoutWithRelayStateAndParameters()
     {
         try {
@@ -1202,13 +1225,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case Logout with relayState + NameID + SessionIndex. A logout Request is build. GET with SAMLRequest.
-    * A redirection is executed
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case Logout with relayState + NameID + SessionIndex. A logout Request is build. GET with SAMLRequest.
+     * A redirection is executed
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogoutWithNameIdAndSessionIndex()
     {
         try {
@@ -1232,12 +1257,14 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case nameID loaded after process SAML Response
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case nameID loaded after process SAML Response
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogoutNameID()
     {
         $message = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -1267,13 +1294,15 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case Logout signed. A logout Request signed in
-    * the assertion is built and redirect executed
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    * @runInSeparateProcess
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case Logout signed. A logout Request signed in
+     * the assertion is built and redirect executed
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testLogoutSigned()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -1307,11 +1336,11 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the logout method of the OneLogin_Saml2_Auth class
-    * Case IdP no SLO endpoint.
-    *
-    * @covers OneLogin_Saml2_Auth::logout
-    */
+     * Tests the logout method of the OneLogin_Saml2_Auth class
+     * Case IdP no SLO endpoint.
+     *
+     * @covers OneLogin_Saml2_Auth::logout
+     */
     public function testLogoutNoSLO()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -1331,10 +1360,10 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the setStrict method of the OneLogin_Saml2_Auth
-    *
-    * @covers OneLogin_Saml2_Auth::setStrict
-    */
+     * Tests the setStrict method of the OneLogin_Saml2_Auth
+     *
+     * @covers OneLogin_Saml2_Auth::setStrict
+     */
     public function testSetStrict()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -1363,30 +1392,30 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the buildRequestSignature method of the OneLogin_Saml2_Auth
-    *
-    * @covers OneLogin_Saml2_Auth::buildRequestSignature
-    */
+     * Tests the buildRequestSignature method of the OneLogin_Saml2_Auth
+     *
+     * @covers OneLogin_Saml2_Auth::buildRequestSignature
+     */
     public function testBuildRequestSignature()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_requests/logout_request_deflated.xml.base64');
         $relayState = 'http://relaystate.com';
         $signature = $this->_auth->buildRequestSignature($message, $relayState);
-        $validSignature = 'Pb1EXAX5TyipSJ1SndEKZstLQTsT+1D00IZAhEepBM+OkAZQSToivu3njgJu47HZiZAqgXZFgloBuuWE/+GdcSsRYEMkEkiSDWTpUr25zKYLJDSg6GNo6iAHsKSuFt46Z54Xe/keYxYP03Hdy97EwuuSjBzzgRc5tmpV+KC7+a0=';
+        $validSignature = 'CqdIlbO6GieeJFV+PYqyqz1QVJunQXdZZl+ZyIby9O3/eMJM0XHi+TWReRrpgNxKkbmmvx5fp/t7mphbLiVYNMgGINEaaa/OfoaGwU9GM5YCVULA2t7qZBel1yrIXGMxijJizB7UPR2ZMo4G+Wdhx1zbmbB0GYM0A27w6YCe/+k=';
         $this->assertEquals($validSignature, $signature);
     }
 
     /**
-    * Tests the buildResponseSignature method of the OneLogin_Saml2_Auth
-    *
-    * @covers OneLogin_Saml2_Auth::buildResponseSignature
-    */
+     * Tests the buildResponseSignature method of the OneLogin_Saml2_Auth
+     *
+     * @covers OneLogin_Saml2_Auth::buildResponseSignature
+     */
     public function testBuildResponseSignature()
     {
         $message = file_get_contents(TEST_ROOT . '/data/logout_responses/logout_response_deflated.xml.base64');
         $relayState = 'http://relaystate.com';
         $signature = $this->_auth->buildResponseSignature($message, $relayState);
-        $validSignature = 'IcyWLRX6Dz3wHBfpcUaNLVDMGM3uo6z2Z11Gjq0/APPJaHboKGljffsgMVAGBml497yckq+eYKmmz+jpURV9yTj2sF9qfD6CwX2dEzSzMdRzB40X7pWyHgEJGIhs6BhaOt5oXEk4T+h3AczERqpVYFpL00yo7FNtyQkhZFpHFhM=';
+        $validSignature = 'fFGaOuO/2+ch/xlwU5o7iS6R+v2quWchLAtiDyQTxStFQZKY1NsBs/eYIin2Meq7oTl1Ks6tpT6JshH5OwhPh/08K7M2oa6FIKb99cjg+jIJ/WwpuJ5h9SH0XXP8y3RLhCxLIomHDsBOGQK8WvOlXFUg+9nvOaEMNi6raUWrGhA=';
         $this->assertEquals($validSignature, $signature);
     }
 
@@ -1423,6 +1452,9 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * LogoutRequest.
      *
      * @covers OneLogin_Saml2_Auth::getLastRequestXML()
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetLastLogoutRequestReceived()
     {
@@ -1437,6 +1469,9 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * SAML Response
      *
      * @covers OneLogin_Saml2_Auth::getLastResponseXML()
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetLastSAMLResponse()
     {
@@ -1457,14 +1492,40 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * LogoutResponse.
      *
      * @covers OneLogin_Saml2_Auth::getLastResponseXML()
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetLastLogoutResponseSent()
     {
+        $settingsDir = TEST_ROOT .'/settings/';
+        include $settingsDir.'settings1.php';
+
         $_GET['SAMLRequest'] = file_get_contents(TEST_ROOT . '/data/logout_requests/logout_request.xml.base64');
-        $targetSLOURL = $this->_auth->processSLO(false, null, false, null, true);
+
+        $auth = new OneLogin_Saml2_Auth($settingsInfo);
+        $targetSLOURL = $auth->processSLO(false, null, false, null, true);
         $parsedQuery = getParamsFromUrl($targetSLOURL);
         $decodedLogoutResponse = gzinflate(base64_decode($parsedQuery['SAMLResponse']));
-        $this->assertEquals($decodedLogoutResponse, $this->_auth->getLastResponseXML());
+        $this->assertEquals($decodedLogoutResponse, $auth->getLastResponseXML());
+
+        $settingsInfo['compress'] = array (
+            'responses' => true
+        );
+        $auth2 = new OneLogin_Saml2_Auth($settingsInfo);
+        $targetSLOURL2 = $auth2->processSLO(false, null, false, null, true);
+        $parsedQuery2 = getParamsFromUrl($targetSLOURL2);
+        $decodedLogoutResponse2 = gzinflate(base64_decode($parsedQuery2['SAMLResponse']));
+        $this->assertEquals($decodedLogoutResponse2, $auth2->getLastResponseXML());
+
+        $settingsInfo['compress'] = array (
+            'responses' => false
+        );
+        $auth3 = new OneLogin_Saml2_Auth($settingsInfo);
+        $targetSLOURL3 = $auth3->processSLO(false, null, false, null, true);
+        $parsedQuery3 = getParamsFromUrl($targetSLOURL3);
+        $decodedLogoutResponse3 = base64_decode($parsedQuery3['SAMLResponse']);
+        $this->assertEquals($decodedLogoutResponse3, $auth3->getLastResponseXML());
     }
 
     /**
@@ -1472,6 +1533,9 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * LogoutResponse.
      *
      * @covers OneLogin_Saml2_Auth::getLastResponseXML()
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetLastLogoutResponseReceived()
     {
@@ -1490,6 +1554,7 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * @covers OneLogin_Saml2_Auth::getLastAssertionNotOnOrAfter()
      *
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetInfoFromLastResponseReceived()
     {
@@ -1537,6 +1602,9 @@ class OneLogin_Saml2_AuthTest extends PHPUnit_Framework_TestCase
      * Tests that we can get the Id of the LogoutRequest processed
      *
      * @covers OneLogin_Saml2_Auth::getLastMessageId()
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGetIdFromLastLogoutRequest()
     {

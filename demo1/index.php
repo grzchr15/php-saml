@@ -64,11 +64,11 @@ if (isset($_GET['sso'])) {
     $errors = $auth->getErrors();
 
     if (!empty($errors)) {
-        echo '<p>',implode(', ', $errors),'</p>';
+        echo '<p>' . implode(', ', $errors) . '</p>';
     }
 
     if (!$auth->isAuthenticated()) {
-        echo "<p>Not authenticated</p>";
+        echo '<p>Not authenticated</p>';
         exit();
     }
 
@@ -92,7 +92,7 @@ if (isset($_GET['sso'])) {
     if (empty($errors)) {
         echo '<p>Sucessfully logged out</p>';
     } else {
-        echo '<p>', implode(', ', $errors), '</p>';
+        echo '<p>' . implode(', ', $errors) . '</p>';
     }
 }
 

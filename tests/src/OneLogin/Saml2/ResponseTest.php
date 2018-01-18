@@ -4,13 +4,13 @@
  * Unit tests for Response messages
  */
 
-class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
+class OneLogin_Saml2_ResponseTest extends \PHPUnit\Framework\TestCase
 {
     private $_settings;
 
     /**
-    * Initializes the Test Suite
-    */
+     * Initializes the Test Suite
+     */
     public function setUp()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -22,10 +22,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
 
 
     /**
-    * Tests the OneLogin_Saml2_Response Constructor.
-    *
-    * @covers OneLogin_Saml2_Response
-    */
+     * Tests the OneLogin_Saml2_Response Constructor.
+     *
+     * @covers OneLogin_Saml2_Response
+     */
     public function testConstruct()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -88,6 +88,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('_cccd6024116641fe48e0ae2c51220d02755f96c98d', $response->getAssertionId());
     }
 
+    /**
+     * Tests that we can retrieve attributes when specific namespace
+     *
+     * @covers OneLogin_Saml2_Response::getAttributes()
+     */
     public function testNamespaces()
     {
         $xml = base64_encode(file_get_contents(TEST_ROOT . '/data/responses/open_saml_response.xml'));
@@ -105,10 +110,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getNameId method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getNameId
-    */
+     * Tests the getNameId method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getNameId
+     */
     public function testReturnNameId()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -198,10 +203,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getNameIdFormat method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getNameIdFormat
-    */
+     * Tests the getNameIdFormat method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getNameIdFormat
+     */
     public function testGetNameIdFormat()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -259,10 +264,36 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getNameIdData method of the OneLogin_Saml2_Response
+    * Tests the getNameIdNameQualifier method of the OneLogin_Saml2_Response
     *
-    * @covers OneLogin_Saml2_Response::getNameIdData
+    * @covers OneLogin_Saml2_Response::getNameIdNameQualifier
     */
+    public function testGetNameIdNameQualifier()
+    {
+        $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
+        $response = new OneLogin_Saml2_Response($this->_settings, $xml);
+        $this->assertEquals('https://test.example.com/saml/metadata', $response->getNameIdNameQualifier());
+        $xml2 = file_get_contents(TEST_ROOT . '/data/responses/response_encrypted_nameid.xml.base64');
+        $response2 = new OneLogin_Saml2_Response($this->_settings, $xml2);
+        $this->assertEquals(null, $response2->getNameIdNameQualifier());
+        $xml3 = file_get_contents(TEST_ROOT . '/data/responses/valid_encrypted_assertion.xml.base64');
+        $response3 = new OneLogin_Saml2_Response($this->_settings, $xml3);
+        $this->assertEquals(null, $response3->getNameIdNameQualifier());
+        $xml4 = file_get_contents(TEST_ROOT . '/data/responses/invalids/no_nameid.xml.base64');
+        $response4 = new OneLogin_Saml2_Response($this->_settings, $xml4);
+        try {
+            $nameId4 = $response4->getNameIdNameQualifier();
+            $this->fail('OneLogin_Saml2_ValidationError was not raised');
+        } catch (OneLogin_Saml2_ValidationError $e) {
+            $this->assertContains('NameID not found in the assertion of the Response', $e->getMessage());
+        }
+    }
+
+    /**
+     * Tests the getNameIdData method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getNameIdData
+     */
     public function testGetNameIdData()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -270,7 +301,7 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $expectedNameIdData = array (
             'Value' => 'support@onelogin.com',
             'Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
-            'NameQualifier' => 'https://test.example.com/saml/metadata',
+            'NameQualifier' => 'https://test.example.com/saml/metadata'
         );
         $nameIdData = $response->getNameIdData();
         $this->assertEquals($expectedNameIdData, $nameIdData);
@@ -411,10 +442,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the checkStatus method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::checkStatus
-    */
+     * Tests the checkStatus method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::checkStatus
+     */
     public function testCheckStatus()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -448,10 +479,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getAudiences method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getAudiences
-    */
+     * Tests the getAudiences method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getAudiences
+     */
     public function testGetAudiences()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -466,9 +497,9 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the _queryAssertion and _query methods of the OneLogin_Saml2_Response
-    * using the getIssuers call
-    */
+     * Tests the _queryAssertion and _query methods of the OneLogin_Saml2_Response
+     * using the getIssuers call
+     */
     public function testQueryAssertions()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/adfs_response.xml.base64');
@@ -502,10 +533,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getIssuers method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getIssuers
-    */
+     * Tests the getIssuers method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getIssuers
+     */
     public function testGetIssuers()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/adfs_response.xml.base64');
@@ -535,14 +566,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         }
     }
 
-
-
-
     /**
-    * Tests the getSessionIndex method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getSessionIndex
-    */
+     * Tests the getSessionIndex method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getSessionIndex
+     */
     public function testGetSessionIndex()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -556,12 +584,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('_7164a9a9f97828bfdb8d0ebc004a05d2e7d873f70c', $response2->getSessionIndex());
     }
 
-
     /**
-    * Tests the getAttributes method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getAttributes
-    */
+     * Tests the getAttributes method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getAttributes
+     */
     public function testGetAttributes()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -600,12 +627,12 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getNameId method of the OneLogin_Saml2_Response
-    *
-    * The Assertion is unsigned, the response is invalid but is able to retrieve the NameID
-    *
-    * @covers OneLogin_Saml2_Response::getNameId
-    */
+     * Tests the getNameId method of the OneLogin_Saml2_Response
+     *
+     * The Assertion is unsigned, the response is invalid but is able to retrieve the NameID
+     *
+     * @covers OneLogin_Saml2_Response::getNameId
+     */
     public function testOnlyRetrieveAssertionWithIDThatMatchesSignatureReference()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/wrapped_response_2.xml.base64');
@@ -617,10 +644,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getError method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getError
-    */
+     * Tests the getError method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getError
+     */
     public function testGetError()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response4.xml.base64');
@@ -639,12 +666,12 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getNameId method of the OneLogin_Saml2_Response
-    *
-    * Test that the SignatureWrappingAttack is not allowed
-    *
-    * @covers OneLogin_Saml2_Response::getNameId
-    */
+     * Tests the getNameId method of the OneLogin_Saml2_Response
+     *
+     * Test that the SignatureWrappingAttack is not allowed
+     *
+     * @covers OneLogin_Saml2_Response::getNameId
+     */
     public function testDoesNotAllowSignatureWrappingAttack()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response4.xml.base64');
@@ -679,10 +706,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the getSessionNotOnOrAfter method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::getSessionNotOnOrAfter
-    */
+     * Tests the getSessionNotOnOrAfter method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::getSessionNotOnOrAfter
+     */
     public function testGetSessionNotOnOrAfter()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -701,10 +728,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the validateNumAssertions method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::validateNumAssertions
-    */
+     * Tests the validateNumAssertions method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::validateNumAssertions
+     */
     public function testValidateNumAssertions()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -720,10 +747,10 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the validateTimestamps method of the OneLogin_Saml2_Response
-    *
-    * @covers OneLogin_Saml2_Response::validateTimestamps
-    */
+     * Tests the validateTimestamps method of the OneLogin_Saml2_Response
+     *
+     * @covers OneLogin_Saml2_Response::validateTimestamps
+     */
     public function testValidateTimestamps()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -763,11 +790,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid version
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid version
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testValidateVersion()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/no_saml2.xml.base64');
@@ -778,11 +805,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid no ID
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid no ID
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testValidateID()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/no_id.xml.base64');
@@ -794,11 +821,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid reference
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid reference
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidReference()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response1.xml.base64');
@@ -809,11 +836,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case expired response
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case expired response
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidExpired()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/expired_response.xml.base64');
@@ -828,11 +855,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case no key
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case no key
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidNoKey()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/no_key.xml.base64');
@@ -843,11 +870,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid multiple assertions
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid multiple assertions
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidMultipleAssertions()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/multiple_assertions.xml.base64');
@@ -858,11 +885,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid Encrypted Attrs
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid Encrypted Attrs
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidEncAttrs()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/encrypted_attrs.xml.base64');
@@ -879,11 +906,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid xml
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid xml
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidWrongXML()
     {
         $settingsDir = TEST_ROOT .'/settings/';
@@ -917,11 +944,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid Destination
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid Destination
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidDestination()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response.xml.base64');
@@ -951,11 +978,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid Audience
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid Audience
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidAudience()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/invalid_audience.xml.base64');
@@ -977,11 +1004,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid Issuer
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid Issuer
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidIssuer()
     {
         $currentURL = OneLogin_Saml2_Utils::getSelfURLNoQuery();
@@ -1019,11 +1046,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid SessionIndex
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid SessionIndex
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidSessionIndex()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/invalids/invalid_sessionindex.xml.base64');
@@ -1045,11 +1072,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid SubjectConfirmation
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid SubjectConfirmation
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidSubjectConfirmation()
     {
         $currentURL = OneLogin_Saml2_Utils::getSelfURLNoQuery();
@@ -1136,11 +1163,12 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('A valid SubjectConfirmation was not found on this Response', $response6->getError());
     }
 
-/**
-    * Somtimes IdPs uses datetimes with miliseconds, this
-    * test is to verify that the toolkit supports them
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+    /**
+     * Somtimes IdPs uses datetimes with miliseconds, this
+     * test is to verify that the toolkit supports them
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testDatetimeWithMiliseconds()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response_with_miliseconds.xm.base64');
@@ -1162,11 +1190,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid requestID
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid requestID
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidRequestId()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response.xml.base64');
@@ -1193,13 +1221,12 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertContains('No Signature found. SAML Response rejected', $response2->getError());
     }
 
-
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid signing issues
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid signing issues
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidSignIssues()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response.xml.base64');
@@ -1268,11 +1295,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response class
-    * Case Invalid Response, Invalid encryptation issues
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response class
+     * Case Invalid Response, Invalid encryptation issues
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidEncIssues()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/unsigned_response.xml.base64');
@@ -1320,11 +1347,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid cert
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid cert
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidCert()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -1341,11 +1368,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case invalid cert2
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case invalid cert2
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsInValidCert2()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -1362,11 +1389,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case response with different namespace
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case response with different namespace
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testNamespaceIsValid()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response_namespaces.xml.base64');
@@ -1377,11 +1404,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case response from ADFS
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case response from ADFS
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testADFSValid()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/response_adfs1.xml.base64');
@@ -1392,11 +1419,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case valid response
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case valid response
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsValid()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -1406,11 +1433,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case valid response2
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case valid response2
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsValid2()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/valid_response.xml.base64');
@@ -1427,13 +1454,13 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case valid encrypted assertion
-    *
-    * Signed data can't be modified, so Destination will always fail in strict mode
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case valid encrypted assertion
+     *
+     * Signed data can't be modified, so Destination will always fail in strict mode
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsValidEnc()
     {
         $xml = file_get_contents(TEST_ROOT . '/data/responses/double_signed_encrypted_assertion.xml.base64');
@@ -1466,32 +1493,15 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
         $this->assertContains('No Signature found. SAML Response rejected', $response4->getError());
     }
 
-/*
-    public function testIsValidEncWithNSProblem()
-    {
-        $settingsDir = TEST_ROOT .'/settings/';
-        include $settingsDir.'settings1.php';
-
-        $settingsInfo['idp']['x509cert'] = 'MIICajCCAdOgAwIBAgIBADANBgkqhkiG9w0BAQ0FADBSMQswCQYDVQQGEwJ1czETMBEGA1UECAwKQ2FsaWZvcm5pYTEVMBMGA1UECgwMT25lbG9naW4gSW5jMRcwFQYDVQQDDA5zcC5leGFtcGxlLmNvbTAeFw0xNDA3MTcxNDEyNTZaFw0xNTA3MTcxNDEyNTZaMFIxCzAJBgNVBAYTAnVzMRMwEQYDVQQIDApDYWxpZm9ybmlhMRUwEwYDVQQKDAxPbmVsb2dpbiBJbmMxFzAVBgNVBAMMDnNwLmV4YW1wbGUuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZx+ON4IUoIWxgukTb1tOiX3bMYzYQiwWPUNMp+Fq82xoNogso2bykZG0yiJm5o8zv/sd6pGouayMgkx/2FSOdc36T0jGbCHuRSbtia0PEzNIRtmViMrt3AeoWBidRXmZsxCNLwgIV6dn2WpuE5Az0bHgpZnQxTKFek0BMKU/d8wIDAQABo1AwTjAdBgNVHQ4EFgQUGHxYqZYyX7cTxKVODVgZwSTdCnwwHwYDVR0jBBgwFoAUGHxYqZYyX7cTxKVODVgZwSTdCnwwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQ0FAAOBgQByFOl+hMFICbd3DJfnp2Rgd/dqttsZG/tyhILWvErbio/DEe98mXpowhTkC04ENprOyXi7ZbUqiicF89uAGyt1oqgTUCD1VsLahqIcmrzgumNyTwLGWo17WDAa1/usDhetWAMhgzF/Cnf5ek0nK00m0YZGyc4LzgD0CROMASTWNg==';
-        $settingsInfo['sp']['x509cert'] = 'MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czEMMAoGA1UECAwDeHh4MQwwCgYDVQQKDAN4eHgxEDAOBgNVBAMMB3h4eC5jb20wHhcNMTYwNzIwMTQ1MzE5WhcNMTcwNzIwMTQ1MzE5WjA7MQswCQYDVQQGEwJ1czEMMAoGA1UECAwDeHh4MQwwCgYDVQQKDAN4eHgxEDAOBgNVBAMMB3h4eC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAL/CBtDyuvSbbS3ngUtQ+vBNiGSainIhxZDd8QFFInoRAUuST2WDRLNe0InkaMrE9yJXnQb0EUDfN+9gQgoNIzhrcUK8OzttKRTSecdxaab9KdRqd2T8fsr4A91clOCh8uoUi3yyQkHA6pHArKFuxFc5FkfkvOS5mLo967VTn/qBAgMBAAGjUDBOMB0GA1UdDgQWBBRNQKAK0I1y2ztvJ3aZvo+/s13aoDAfBgNVHSMEGDAWgBRNQKAK0I1y2ztvJ3aZvo+/s13aoDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBDQUAA4GBAF/BiDLQWm6GoXLi/xgih59kCeqjWhggeDEQt2nD4b4MNIR/d+xBZ/NE0IGBEu1BG6lmUMn3mVhdNalNAvaKOhBRywXX6tdoIxwdg7d6GGI9eI7EHNCOFbPwM133eAs9ars1WO5TxPqWcp1Pgwtl7SQH18NEH8xXbcg3VM5tXhO4';
-        $settingsInfo['sp']['privateKey'] = 'MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAL/CBtDyuvSbbS3ngUtQ+vBNiGSainIhxZDd8QFFInoRAUuST2WDRLNe0InkaMrE9yJXnQb0EUDfN+9gQgoNIzhrcUK8OzttKRTSecdxaab9KdRqd2T8fsr4A91clOCh8uoUi3yyQkHA6pHArKFuxFc5FkfkvOS5mLo967VTn/qBAgMBAAECgYEAghH0WassEVuUNT0BQLtPW8zbpZIGMuChiGBjZ78jYbVDMaWu4WanJRw9TCt4wYHVOKBBTUQkp+JBqMecRAEhT6ZLdZP3olA0JMLg7/XeJ9f3WmVxG5y3mm3xc1qYMaZrflPI8d+ehkrWt0CPgRisvtS6gjTMrAT9tpOSnvUKyCECQQD/NDuik4UFcbdwPeR0Rmm14pQeTfanHq03tSp/nZAGAnCWUJqkatGAdzvdBVMf1akw3Yj4/tmb6YQVzSvomJldAkEAwFsioWHVhsPPRk5AlkwJPdatQp3d+U8TP/TyWPRvIIXCqwaeU+lw3aivJIn2ElEH4iMTcMDQfmMYP/QjQnQ/dQJBAKQsRfDgVcKa1RcvubfTVE3d5MtZ/EKmSWh880oFYpF7IFKSp+j9jqjGC4yz0DW6jY0R9vu3duYF4yLjSkvnX0ECQBFAm0yKL9KUgWS25AgW7cVEGeodqqkPtJRJ7eqYkdcC6EDaqRyxlVPsKzlFvnJKHkDkEHxObuTHEoe55+ev8XkCQF3DSI43jzsEHvt6DGz77vqA6lMcPnnzDYRI1qfTHv8TG6i7nBNqUGsvpFvAHH2EIClDNUa4xlfPP3jEAk18rYw=';
-        $xml = base64_encode(file_get_contents(TEST_ROOT . '/data/responses/signed_encrypted_assertion_with_ns_problems.xml'));
-
-        $settings = new OneLogin_Saml2_Settings($settingsInfo);
-        $response = new OneLogin_Saml2_Response($settings, $xml);
-        $this->assertTrue($response->isValid());
-    }
-*/
-
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case valid sign response / sign assertion / both signed
-    *
-    * Strict mode will always fail due destination problem, if we manipulate it
-    * the sign will fail.
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case valid sign response / sign assertion / both signed
+     *
+     * Strict mode will always fail due destination problem, if we manipulate it
+     * the sign will fail.
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsValidSign()
     {
 
@@ -1548,11 +1558,11 @@ class OneLogin_Saml2_ResponseTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the isValid method of the OneLogin_Saml2_Response
-    * Case: Using x509certMulti
-    *
-    * @covers OneLogin_Saml2_Response::isValid
-    */
+     * Tests the isValid method of the OneLogin_Saml2_Response
+     * Case: Using x509certMulti
+     *
+     * @covers OneLogin_Saml2_Response::isValid
+     */
     public function testIsValidSignUsingX509certMulti()
     {
         $settingsDir = TEST_ROOT .'/settings/';

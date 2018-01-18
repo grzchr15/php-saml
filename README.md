@@ -10,13 +10,7 @@ and supported by OneLogin Inc.
 Warning
 -------
 
-Update php-saml to 2.10.4, this version includes a security patch related to
-[signature validations on LogoutRequests/LogoutResponses](https://github.com/onelogin/php-saml/commit/949359f5cad5e1d085c4e5447d9aa8f49a6e82a1)
-
-Update php-saml to 2.10.0, this version includes a security patch that contains extra validations that will prevent signature wrapping attacks. [CVE-2016-1000253](https://github.com/distributedweaknessfiling/DWF-Database-Artifacts/blob/ab8ae6e845eb506fbeb10a7e4ccb379f0b4222ca/DWF/2016/1000253/CVE-2016-1000253.json)
-
-php-saml < v2.10.0 is vulnerable and allows signature wrapping!
-
+This version is compatible with PHP 7.X and does not include xmlseclibs (you will need to install it via composer, dependency described in composer.json)
 
 Security Guidelines
 -------------------
@@ -81,14 +75,10 @@ Installation
 
 ### Dependencies ###
 
- * `php >= 5.3.3` and some core extensions like `php-xml`, `php-date`, `php-zlib`.
+ * `php >= 5.4` and some core extensions like `php-xml`, `php-date`, `php-zlib`.
  * `openssl`. Install the openssl library. It handles x509 certificates.
- * `mcrypt`. Install that library and its php driver if you're going to handle
-   encrypted data (`nameID`, `assertions`).
  * `gettext`. Install that library and its php driver. It handles translations.
  * `curl`. Install that library and its php driver if you plan to use the IdP Metadata parser.
-
-Since [PHP 5.3 is officially unsupported](http://php.net/eol.php) we recommend you to use a newer PHP version.
 
 ### Code ###
 
@@ -96,8 +86,9 @@ Since [PHP 5.3 is officially unsupported](http://php.net/eol.php) we recommend y
 
 The toolkit is hosted on github. You can download it from:
 
- * Lastest release: https://github.com/onelogin/php-saml/releases/latest
- * Master repo: https://github.com/onelogin/php-saml/tree/master
+ * https://github.com/onelogin/php-saml/releases
+
+Search for 3.X.X releases
 
 Copy the core of the library inside the php application. (each application has its
 structure so take your time to locate the PHP SAML toolkit in the best place).
@@ -112,6 +103,8 @@ In order to import the saml toolkit to your current php project, execute
 composer require onelogin/php-saml
 ```
 
+Remember to select the 3.X.X branch
+
 After installation has completed you will find at the `vendor/` folder a new folder named `onelogin` and inside the `php-saml`. Make sure you are including the autoloader provided by composer. It can be found at `vendor/autoload.php`.
 
 **Important** In this option, the x509 certs must be stored at `vendor/onelogin/php-saml/certs`
@@ -122,22 +115,7 @@ Your settings are at risk of being deleted when updating packages using `compose
 Compatibility
 -------------
 
-This 2.0 version has a new library. The toolkit is still compatible.
-
-The old code that you used in order to add SAML support will continue working
-with minor changes. You only need to load the files of the `lib/Saml` folder.
-(notice that the `compatibility.php` file do that).
-
-The old-demo folder contains code from an old app that uses the old version of
-the toolkit (v.1). Take a look.
-
-Sometimes the names of the classes of the old code could be a bit different
-and if that is your case you must change them for `OneLogin_Saml_Settings`,
-`OneLogin_Saml_Response`, `OneLogin_Saml_AuthRequest` or `OneLogin_Saml_Metadata`.
-
-We recommend that you migrate the old code to the new one to be able to use
-the new features that the new library Saml2 carries.
-
+This 3.X.X supports PHP 7.X. but can be used with PHP >=5.4 as well  (5.6.24+ recommended for security reasons).
 
 Namespaces
 ----------
@@ -164,7 +142,7 @@ Getting started
 ### Knowing the toolkit ###
 
 The new OneLogin SAML Toolkit contains different folders (`certs`, `endpoints`,
-`extlib`, `lib`, `demo`, etc.) and some files.
+`lib`, `demo`, etc.) and some files.
 
 Let's start describing the folders:
 
@@ -189,20 +167,10 @@ cert: `metadata.crt` and `metadata.key`.
 Use `sp_new.crt` if you are in a key rollover process and you want to
 publish that x509certificate on Service Provider metadata.
 
-#### `extlib/` ####
-
-This folder contains the 3rd party libraries that the toolkit uses. At the
-moment only uses the `xmlseclibs` (autor Robert Richards, BSD Licensed) which
-handle the sign and the encryption of xml elements.
-
-
 #### `lib/` ####
 
 This folder contains the heart of the toolkit, the libraries:
 
- * `Saml` folder contains a modified version of the toolkit v.1 and allows the
-   old code to keep working. (This library is provided to maintain
-   backward compatibility).
  * `Saml2` folder contains the new version of the classes and methods that
    are described in a later section.
 
@@ -241,8 +209,6 @@ and support multiple languages.
   advanced_settings.php file which contains extra configuration info related to
   the security, the contact person, and the organization associated to the SP.
 * `_toolkit_loader.php` - This file load the toolkit libraries (The SAML2 lib).
-* `compatibility` - Import that file to make compatible your old code with the
-  new toolkit (loads the SAML library).
 
 
 #### Miscellaneous ####
@@ -498,7 +464,7 @@ $advancedSettings = array (
         //    'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256'
         //    'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384'
         //    'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512'
-        // Notice that sha1 is a deprecated algorithm and should not be used
+        // Notice that rsa-sha1 is a deprecated algorithm and should not be used
         'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
 
         // Algorithm that the toolkit will use on digest process. Options:
@@ -582,9 +548,13 @@ $auth = new OneLogin_Saml2_Auth($settingsInfo);
 
 #### How load the library ####
 
-In order to use the toolkit library you need to import the `_toolkit_loader.php`
-file located on the base folder of the toolkit. You can load this file in this
-way:
+
+In order to use the toolkit library, if your project support composer you only
+need to install it with composer (See the installation section) and you are done.
+
+
+If your project doesn't use composer you need to import the `_toolkit_loader.php`
+file located on the base folder of the toolkit. You can load this file in this way:
 
 ```php
 <?php
@@ -596,17 +566,9 @@ require_once(TOOLKIT_PATH . '_toolkit_loader.php');
 After that line we will be able to use the classes (and their methods) of the
 toolkit (because the external and the Saml2 libraries files are loaded).
 
-If you wrote the code of your SAML app for the version 1 of the PHP-SAML toolkit
-you will need to load the `compatibility.php`, file which loads the SAML library files,
-in addition to the the `_toolkit_loader.php`.
-
-That SAML library uses the new classes and methods of the latest version of the
-toolkits but maintain the old classes, methods, and workflow of the old process
-to accomplish the same things.
-
-We strongly recommend migrating your old code and use the new API of the
-new toolkit due there are a lot of new features that you can't handle with the
-old code.
+That toolkit depends on [xmlseclibs](https://github.com/robrichards/xmlseclibs) 3.X.X branch,
+you will need to get its code and place on your project and reuse the _toolkit_loader.php 
+file to include xmlseclibs as well.
 
 
 #### Initiate SSO ####
@@ -730,7 +692,11 @@ unset($_SESSION['AuthNRequestID']);
 $errors = $auth->getErrors();
 
 if (!empty($errors)) {
+<<<<<<< HEAD
     echo '<p>', implode(', ', $errors), '</p>';
+=======
+    echo '<p>' . implode(', ', $errors) . '</p>';
+>>>>>>> 297065c6ca2e86c9db502a58e05b09b0142573e4
     exit();
 }
 
@@ -754,8 +720,8 @@ $nameId = $_SESSION['samlNameId'];
 echo '<h1>Identified user: '. htmlentities($nameId) .'</h1>';
 
 if (!empty($attributes)) {
-    echo '<h2>'._('User attributes:').'</h2>';
-    echo '<table><thead><th>'._('Name').'</th><th>'._('Values').'</th></thead><tbody>';
+    echo '<h2>' . _('User attributes:') . '</h2>';
+    echo '<table><thead><th>' . _('Name') . '</th><th>' . _('Values') . '</th></thead><tbody>';
     foreach ($attributes as $attributeName => $attributeValues) {
         echo '<tr><td>' . htmlentities($attributeName) . '</td><td><ul>';
         foreach ($attributeValues as $attributeValue) {
@@ -1041,7 +1007,7 @@ session_start();    // Initialize the session, we do that because
                     // Note that processResponse and processSLO
                     // methods could manipulate/close that session
 
-require_once dirname(__DIR__).'/_toolkit_loader.php'; // Load Saml2 and external libs
+require_once dirname(__DIR__) . '/_toolkit_loader.php'; // Load Saml2 and xmlseclibs
 require_once 'settings.php';    // Load the setting info as an Array
 
 $auth = new OneLogin_Saml2_Auth($settingsInfo);  // Initialize the SP SAML instance
@@ -1062,11 +1028,11 @@ if (isset($_GET['sso'])) {    // SSO action.  Will send an AuthNRequest to the I
                                    // that could took place during the process
 
     if (!empty($errors)) {
-        echo '<p>', implode(', ', $errors), '</p>';
+        echo '<p>' . implode(', ', $errors) . '</p>';
     }
                                           // This check if the response was
     if (!$auth->isAuthenticated()) {      // sucessfully validated and the user
-        echo "<p>Not authenticated</p>";  // data retrieved or not
+        echo '<p>Not authenticated</p>';  // data retrieved or not
         exit();
     }
 
@@ -1080,7 +1046,7 @@ if (isset($_GET['sso'])) {    // SSO action.  Will send an AuthNRequest to the I
     if (empty($errors)) {
         echo '<p>Sucessfully logged out</p>';
     } else {
-        echo '<p>', implode(', ', $errors), '</p>';
+        echo '<p>' . implode(', ', $errors) . '</p>';
     }
 }
 
@@ -1520,7 +1486,7 @@ Once the SP is configured, the metadata of the SP is published at the
 In demo1, we saw how all the SAML Request and Responses were handler at an
 unique file, the `index.php` file. This demo1 uses high-level programming.
 
-In demo2, we have several views: `index.php`, `sso.php`, `slo.php`, `consume.php`
+At demo2, we have several views: `index.php`, `sso.php`, `slo.php`, `consume.php`
 and `metadata.php`. As we said, we will use the endpoints that are defined
 in the toolkit (`acs.php`, `sls.php` of the endpoints folder). This demo2 uses
 low-level programming.

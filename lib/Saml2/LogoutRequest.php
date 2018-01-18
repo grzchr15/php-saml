@@ -1,43 +1,61 @@
 <?php
+/**
+ * This file is part of php-saml.
+ *
+ * (c) OneLogin Inc
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package OneLogin
+ * @author  OneLogin Inc <saml-info@onelogin.com>
+ * @license MIT https://github.com/onelogin/php-saml/blob/master/LICENSE
+ * @link    https://github.com/onelogin/php-saml
+ */
+
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 
 /**
  * SAML 2 Logout Request
- *
  */
 class OneLogin_Saml2_LogoutRequest
 {
     /**
-    * Contains the ID of the Logout Request
-    * @var string
-    */
+     * Contains the ID of the Logout Request
+     *
+     * @var string
+     */
     public $id;
 
     /**
      * Object that represents the setting info
+     *
      * @var OneLogin_Saml2_Settings
      */
     protected $_settings;
 
     /**
      * SAML Logout Request
+     *
      * @var string
      */
     protected $_logoutRequest;
 
     /**
-    * After execute a validation process, this var contains the cause
-    * @var string
-    */
+     * After execute a validation process, this var contains the cause
+     *
+     * @var string
+     */
     private $_error;
 
     /**
      * Constructs the Logout Request object.
      *
-     * @param OneLogin_Saml2_Settings $settings     Settings
-     * @param string|null             $request      A UUEncoded Logout Request.
-     * @param string|null             $nameId       The NameID that will be set in the LogoutRequest.
-     * @param string|null             $sessionIndex The SessionIndex (taken from the SAML Response in the SSO process).
-     * @param string|null             $nameIdFormat The NameID Format will be set in the LogoutRequest.
+     * @param OneLogin_Saml2_Settings $settings            Settings
+     * @param string|null             $request             A UUEncoded Logout Request.
+     * @param string|null             $nameId              The NameID that will be set in the LogoutRequest.
+     * @param string|null             $sessionIndex        The SessionIndex (taken from the SAML Response in the SSO process).
+     * @param string|null             $nameIdFormat        The NameID Format will be set in the LogoutRequest.
      * @param string|null             $nameIdNameQualifier The NameID NameQualifier will be set in the LogoutRequest.
      */
     public function __construct(OneLogin_Saml2_Settings $settings, $request = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null, $nameIdNameQualifier = null)
@@ -72,8 +90,9 @@ class OneLogin_Saml2_LogoutRequest
             }
 
             if (!empty($nameId)) {
-                if (empty($nameIdFormat) &&
-                  $spData['NameIDFormat'] != OneLogin_Saml2_Constants::NAMEID_UNSPECIFIED) {
+
+                if (empty($nameIdFormat)
+                    && $spData['NameIDFormat'] != OneLogin_Saml2_Constants::NAMEID_UNSPECIFIED) {
                     $nameIdFormat = $spData['NameIDFormat'];
                 }
                 $spNameQualifier = null;
@@ -120,7 +139,6 @@ LOGOUTREQUEST;
         }
         $this->_logoutRequest = $logoutRequest;
     }
-
 
     /**
      * Returns the Logout Request defated, base64encoded, unsigned
@@ -294,6 +312,8 @@ LOGOUTREQUEST;
     /**
      * Checks if the Logout Request recieved is valid.
      *
+     * @param bool $retrieveParametersFromServer True if we want to use parameters from $_SERVER to validate the signature
+     *
      * @return bool If the Logout Request is or not valid
      */
     public function isValid($retrieveParametersFromServer = false)
@@ -387,7 +407,8 @@ LOGOUTREQUEST;
         }
     }
 
-    /* After execute a validation process, if fails this method returns the cause
+    /**
+     * After execute a validation process, if fails this method returns the cause
      *
      * @return string Cause
      */

@@ -1,39 +1,56 @@
 <?php
+/**
+ * This file is part of php-saml.
+ *
+ * (c) OneLogin Inc
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package OneLogin
+ * @author  OneLogin Inc <saml-info@onelogin.com>
+ * @license MIT https://github.com/onelogin/php-saml/blob/master/LICENSE
+ * @link    https://github.com/onelogin/php-saml
+ */
 
 /**
  * SAML 2 Logout Response
- *
  */
 class OneLogin_Saml2_LogoutResponse
 {
     /**
-    * Contains the ID of the Logout Response
-    * @var string
-    */
+     * Contains the ID of the Logout Response
+     *
+     * @var string
+     */
     public $id;
 
     /**
      * Object that represents the setting info
+     *
      * @var OneLogin_Saml2_Settings
      */
     protected $_settings;
 
     /**
      * The decoded, unprocessed XML response provided to the constructor.
-     * @var string
+     *
+     * @var string|null
      */
     protected $_logoutResponse;
 
     /**
      * A DOMDocument class loaded from the SAML LogoutResponse.
+     *
      * @var DomDocument
      */
     public $document;
 
     /**
-    * After execute a validation process, if it fails, this var contains the cause
-    * @var string|null
-    */
+     * After execute a validation process, if it fails, this var contains the cause
+     *
+     * @var string|null
+     */
     private $_error;
 
     /**
@@ -102,8 +119,8 @@ class OneLogin_Saml2_LogoutResponse
     /**
      * Determines if the SAML LogoutResponse is valid
      *
-     * @param string|null $requestId The ID of the LogoutRequest sent by this SP to the IdP
-     * @param bool $retrieveParametersFromServer
+     * @param string|null $requestId                    The ID of the LogoutRequest sent by this SP to the IdP
+     * @param bool        $retrieveParametersFromServer True if we want to use parameters from $_SERVER to validate the signature
      *
      * @return bool Returns if the SAML LogoutResponse is or not valid
      *
@@ -249,19 +266,20 @@ LOGOUTRESPONSE;
      */
     public function getResponse($deflate = null)
     {
-        $subject = $this->_logoutResponse;
+        $logoutResponse = $this->_logoutResponse;
 
         if (is_null($deflate)) {
             $deflate = $this->_settings->shouldCompressResponses();
         }
 
         if ($deflate) {
-            $subject = gzdeflate($this->_logoutResponse);
+            $logoutResponse = gzdeflate($this->_logoutResponse);
         }
-        return base64_encode($subject);
+        return base64_encode($logoutResponse);
     }
 
-    /* After execute a validation process, if fails this method returns the cause.
+    /**
+     * After execute a validation process, if fails this method returns the cause.
      *
      * @return string Cause
      */
@@ -270,9 +288,10 @@ LOGOUTRESPONSE;
         return $this->_error;
     }
 
-   /**
-    * @return string the ID of the Response
-    */
+
+    /**
+     * @return string the ID of the Response
+     */
     public function getId()
     {
         return $this->id;
@@ -282,7 +301,7 @@ LOGOUTRESPONSE;
      * Returns the XML that will be sent as part of the response
      * or that was received at the SP
      *
-     * @return string
+     * @return string|null
      */
     public function getXML()
     {

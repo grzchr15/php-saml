@@ -1,10 +1,24 @@
 <?php
+/**
+ * This file is part of php-saml.
+ *
+ * (c) OneLogin Inc
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @package OneLogin
+ * @author  OneLogin Inc <saml-info@onelogin.com>
+ * @license MIT https://github.com/onelogin/php-saml/blob/master/LICENSE
+ * @link    https://github.com/onelogin/php-saml
+ */
+
+use RobRichards\XMLSecLibs\XMLSecurityKey;
+use RobRichards\XMLSecLibs\XMLSecurityDSig;
 
 /**
  * Configuration of the OneLogin PHP Toolkit
- *
  */
-
 class OneLogin_Saml2_Settings
 {
     /**
@@ -86,7 +100,7 @@ class OneLogin_Saml2_Settings
     private $_errors = array();
 
     /**
-     * Setting errors.
+     * Valitate SP data only flag
      *
      * @var bool
      */
@@ -97,8 +111,8 @@ class OneLogin_Saml2_Settings
      * - Sets the paths of the different folders
      * - Loads settings info from settings file or array/object provided
      *
-     * @param array|object|null $settings SAML Toolkit Settings
-     * @param bool $spValidationOnly
+     * @param array|object|null $settings         SAML Toolkit Settings
+     * @param bool              $spValidationOnly Validate or not the IdP data
      *
      * @throws OneLogin_Saml2_Error If any settings parameter is invalid
      * @throws Exception If OneLogin_Saml2_Settings is incorrectly supplied
@@ -132,13 +146,11 @@ class OneLogin_Saml2_Settings
                 array(implode(', ', $this->_errors))
             );
         } else {
-            if (!$this->_loadSettingsFromArray($settings->getValues())) {
-                throw new OneLogin_Saml2_Error(
-                    'Invalid array settings: %s',
-                    OneLogin_Saml2_Error::SETTINGS_INVALID,
-                    array(implode(', ', $this->_errors))
-                );
-            }
+            throw new OneLogin_Saml2_Error(
+                'Invalid array settings: %s',
+                OneLogin_Saml2_Error::SETTINGS_INVALID,
+                array(implode(', ', $this->_errors))
+            );
         }
 
         $this->formatIdPCert();
@@ -154,18 +166,17 @@ class OneLogin_Saml2_Settings
      */
     private function _loadPaths()
     {
-        $basePath = dirname(dirname(__DIR__)).'/';
+        $basePath = dirname(dirname(__DIR__)) . '/';
         $this->_paths = array (
             'base' => $basePath,
             'config' => $basePath,
             'cert' => $basePath.'certs/',
-            'lib' => $basePath.'lib/',
-            'extlib' => $basePath.'extlib/'
+            'lib' => $basePath.'lib/'
         );
 
         if (defined('ONELOGIN_CUSTOMPATH')) {
             $this->_paths['config'] = ONELOGIN_CUSTOMPATH;
-            $this->_paths['cert'] = ONELOGIN_CUSTOMPATH.'certs/';
+            $this->_paths['cert'] = ONELOGIN_CUSTOMPATH . 'certs/';
         }
     }
 
@@ -207,16 +218,6 @@ class OneLogin_Saml2_Settings
     public function getLibPath()
     {
         return $this->_paths['lib'];
-    }
-
-    /**
-     * Returns external lib path.
-     *
-     * @return string  The external library folder path
-     */
-    public function getExtLibPath()
-    {
-        return $this->_paths['extlib'];
     }
 
     /**
@@ -307,7 +308,6 @@ class OneLogin_Saml2_Settings
         include $filename;
 
         // Add advance_settings if exists
-
         $advancedFilename = $this->getConfigPath().'advanced_settings.php';
 
         if (file_exists($advancedFilename)) {
@@ -398,12 +398,12 @@ class OneLogin_Saml2_Settings
 
         // SignatureAlgorithm
         if (!isset($this->_security['signatureAlgorithm'])) {
-            $this->_security['signatureAlgorithm'] = XMLSecurityKey::RSA_SHA1;
+            $this->_security['signatureAlgorithm'] = XMLSecurityKey::RSA_SHA256;
         }
 
         // DigestAlgorithm
         if (!isset($this->_security['digestAlgorithm'])) {
-            $this->_security['digestAlgorithm'] = XMLSecurityDSig::SHA1;
+            $this->_security['digestAlgorithm'] = XMLSecurityDSig::SHA256;
         }
 
         if (!isset($this->_security['lowercaseUrlencoding'])) {
@@ -438,7 +438,7 @@ class OneLogin_Saml2_Settings
      */
     public function checkSettings($settings)
     {
-        assert('is_array($settings)');
+        assert(is_array($settings));
 
         if (!is_array($settings) || empty($settings)) {
             $errors = array('invalid_syntax');
@@ -496,7 +496,7 @@ class OneLogin_Saml2_Settings
      */
     public function checkIdPSettings($settings)
     {
-        assert('is_array($settings)');
+        assert(is_array($settings));
 
         if (!is_array($settings) || empty($settings)) {
             return array('invalid_syntax');
@@ -561,7 +561,7 @@ class OneLogin_Saml2_Settings
      */
     public function checkSPSettings($settings)
     {
-        assert('is_array($settings)');
+        assert(is_array($settings));
 
         if (!is_array($settings) || empty($settings)) {
             return array('invalid_syntax');
@@ -709,6 +709,7 @@ class OneLogin_Saml2_Settings
      * Returns the x509 public of the SP that is
      * planed to be used soon instead the other
      * public cert
+     *
      * @return string SP public cert New
      */
     public function getSPcertNew()
@@ -778,20 +779,20 @@ class OneLogin_Saml2_Settings
     }
 
     /**
-    * Should SAML requests be compressed?
-    *
-    * @return bool Yes/No as True/False
-    */
+     * Should SAML requests be compressed?
+     *
+     * @return bool Yes/No as True/False
+     */
     public function shouldCompressRequests()
     {
         return $this->_compress['requests'];
     }
 
     /**
-    * Should SAML responses be compressed?
-    *
-    * @return bool Yes/No as True/False
-    */
+     * Should SAML responses be compressed?
+     *
+     * @return bool Yes/No as True/False
+     */
     public function shouldCompressResponses()
     {
         return $this->_compress['responses'];
@@ -896,7 +897,7 @@ class OneLogin_Saml2_Settings
      */
     public function validateMetadata($xml)
     {
-        assert('is_string($xml)');
+        assert(is_string($xml));
 
         $errors = array();
         $res = OneLogin_Saml2_Utils::validateXML($xml, 'saml-schema-metadata-2.0.xsd', $this->_debug);
@@ -1035,6 +1036,8 @@ class OneLogin_Saml2_Settings
 
     /**
      * Set a baseurl value.
+     *
+     * @param string $baseurl Base URL.
      */
     public function setBaseURL($baseurl)
     {

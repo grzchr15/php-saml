@@ -15,12 +15,12 @@ $auth->processResponse();
 $errors = $auth->getErrors();
 
 if (!empty($errors)) {
-    echo '<p>', implode(', ', $errors), '</p>';
+    echo '<p>' . implode(', ', $errors) . '</p>';
     exit();
 }
 
 if (!$auth->isAuthenticated()) {
-    echo "<p>Not authenticated</p>";
+    echo '<p>Not authenticated</p>';
     exit();
 }
 

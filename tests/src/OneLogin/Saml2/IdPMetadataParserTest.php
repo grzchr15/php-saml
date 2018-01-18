@@ -3,13 +3,13 @@
 /**
  * Unit tests for IdPMetadataParser class
  */
-class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
+class OneLogin_Saml2_IdPMetadataParserTest extends \PHPUnit\Framework\TestCase
 {
     /**
-    * Tests the parseFileXML method of IdPMetadataParser.
-    *
-    * @covers OneLogin_Saml2_IdPMetadataParser::parseFileXML
-    */
+     * Tests the parseFileXML method of IdPMetadataParser.
+     *
+     * @covers OneLogin_Saml2_IdPMetadataParser::parseFileXML
+     */
     public function testParseFileXML()
     {
         $expectedInfo = array (
@@ -47,18 +47,17 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 "NameIDFormat" => "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
             )
         );
-
         $filepath = TEST_ROOT .'/data/metadata/idp/idp_metadata.xml';
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseFileXML($filepath);
         $this->assertEquals($expectedInfo2, $idpInfo);
     }
 
     /**
-    * Tests the parseXML method of IdPMetadataParser.
-    * Case: Multix509cert
-    *
-    * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
-    */
+     * Tests the parseXML method of IdPMetadataParser.
+     * Case: Multix509cert
+     *
+     * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
+     */
     public function testParseXML()
     {
         $expectedInfo = array (
@@ -116,14 +115,12 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
             "x509cert" => "MIIEDjCCAvagAwIBAgIBADANBgkqhkiG9w0BAQUFADBnMQswCQYDVQQGEwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRMwEQYDVQQHEwpQaXR0c2J1cmdoMREwDwYDVQQKEwhUZXN0U2hpYjEZMBcGA1UEAxMQaWRwLnRlc3RzaGliLm9yZzAeFw0wNjA4MzAyMTEyMjVaFw0xNjA4MjcyMTEyMjVaMGcxCzAJBgNVBAYTAlVTMRUwEwYDVQQIEwxQZW5uc3lsdmFuaWExEzARBgNVBAcTClBpdHRzYnVyZ2gxETAPBgNVBAoTCFRlc3RTaGliMRkwFwYDVQQDExBpZHAudGVzdHNoaWIub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArYkCGuTmJp9eAOSGHwRJo1SNatB5ZOKqDM9ysg7CyVTDClcpu93gSP10nH4gkCZOlnESNgttg0r+MqL8tfJC6ybddEFB3YBo8PZajKSe3OQ01Ow3yT4I+Wdg1tsTpSge9gEz7SrC07EkYmHuPtd71CHiUaCWDv+xVfUQX0aTNPFmDixzUjoYzbGDrtAyCqA8f9CN2txIfJnpHE6q6CmKcoLADS4UrNPlhHSzd614kR/JYiks0K4kbRqCQF0Dv0P5Di+rEfefC6glV8ysC8dB5/9nb0yh/ojRuJGmgMWHgWk6h0ihjihqiu4jACovUZ7vVOCgSE5Ipn7OIwqd93zp2wIDAQABo4HEMIHBMB0GA1UdDgQWBBSsBQ869nh83KqZr5jArr4/7b+QazCBkQYDVR0jBIGJMIGGgBSsBQ869nh83KqZr5jArr4/7b+Qa6FrpGkwZzELMAkGA1UEBhMCVVMxFTATBgNVBAgTDFBlbm5zeWx2YW5pYTETMBEGA1UEBxMKUGl0dHNidXJnaDERMA8GA1UEChMIVGVzdFNoaWIxGTAXBgNVBAMTEGlkcC50ZXN0c2hpYi5vcmeCAQAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOCAQEAjR29PhrCbk8qLN5MFfSVk98t3CT9jHZoYxd8QMRLI4j7iYQxXiGJTT1FXs1nd4Rha9un+LqTfeMMYqISdDDI6tv8iNpkOAvZZUosVkUo93pv1T0RPz35hcHHYq2yee59HJOco2bFlcsH8JBXRSRrJ3Q7Eut+z9uo80JdGNJ4/SJy5UorZ8KazGj16lfJhOBXldgrhppQBb0Nq6HKHguqmwRfJ+WkxemZXzhediAjGeka8nz8JjwxpUjAiSWYKLtJhGEaTqCYxCCX2Dw+dOTqUzHOZ7WKv4JXPK5G/Uhr8K/qhmFT2nIQi538n6rVYLeWj8Bbnl+ev0peYzxFyF5sQA=="
           )
         );
-
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/testshib-providers.xml');
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseXML($xml);
         $idpInfo2 = OneLogin_Saml2_IdPMetadataParser::parseXML($xml, null, null, OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT, OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT);
         $this->assertEquals($expectedInfo, $idpInfo);
         $this->assertEquals($expectedInfo, $idpInfo2);
     }
-
     /**
     * Tests the parseXML method of IdPMetadataParser.
     * Case: Test with testshib metadata.
@@ -148,14 +145,12 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
             "x509cert" => "MIIEDjCCAvagAwIBAgIBADANBgkqhkiG9w0BAQUFADBnMQswCQYDVQQGEwJVUzEVMBMGA1UECBMMUGVubnN5bHZhbmlhMRMwEQYDVQQHEwpQaXR0c2J1cmdoMREwDwYDVQQKEwhUZXN0U2hpYjEZMBcGA1UEAxMQaWRwLnRlc3RzaGliLm9yZzAeFw0wNjA4MzAyMTEyMjVaFw0xNjA4MjcyMTEyMjVaMGcxCzAJBgNVBAYTAlVTMRUwEwYDVQQIEwxQZW5uc3lsdmFuaWExEzARBgNVBAcTClBpdHRzYnVyZ2gxETAPBgNVBAoTCFRlc3RTaGliMRkwFwYDVQQDExBpZHAudGVzdHNoaWIub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArYkCGuTmJp9eAOSGHwRJo1SNatB5ZOKqDM9ysg7CyVTDClcpu93gSP10nH4gkCZOlnESNgttg0r+MqL8tfJC6ybddEFB3YBo8PZajKSe3OQ01Ow3yT4I+Wdg1tsTpSge9gEz7SrC07EkYmHuPtd71CHiUaCWDv+xVfUQX0aTNPFmDixzUjoYzbGDrtAyCqA8f9CN2txIfJnpHE6q6CmKcoLADS4UrNPlhHSzd614kR/JYiks0K4kbRqCQF0Dv0P5Di+rEfefC6glV8ysC8dB5/9nb0yh/ojRuJGmgMWHgWk6h0ihjihqiu4jACovUZ7vVOCgSE5Ipn7OIwqd93zp2wIDAQABo4HEMIHBMB0GA1UdDgQWBBSsBQ869nh83KqZr5jArr4/7b+QazCBkQYDVR0jBIGJMIGGgBSsBQ869nh83KqZr5jArr4/7b+Qa6FrpGkwZzELMAkGA1UEBhMCVVMxFTATBgNVBAgTDFBlbm5zeWx2YW5pYTETMBEGA1UEBxMKUGl0dHNidXJnaDERMA8GA1UEChMIVGVzdFNoaWIxGTAXBgNVBAMTEGlkcC50ZXN0c2hpYi5vcmeCAQAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOCAQEAjR29PhrCbk8qLN5MFfSVk98t3CT9jHZoYxd8QMRLI4j7iYQxXiGJTT1FXs1nd4Rha9un+LqTfeMMYqISdDDI6tv8iNpkOAvZZUosVkUo93pv1T0RPz35hcHHYq2yee59HJOco2bFlcsH8JBXRSRrJ3Q7Eut+z9uo80JdGNJ4/SJy5UorZ8KazGj16lfJhOBXldgrhppQBb0Nq6HKHguqmwRfJ+WkxemZXzhediAjGeka8nz8JjwxpUjAiSWYKLtJhGEaTqCYxCCX2Dw+dOTqUzHOZ7WKv4JXPK5G/Uhr8K/qhmFT2nIQi538n6rVYLeWj8Bbnl+ev0peYzxFyF5sQA=="
           )
         );
-
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/testshib-providers.xml');
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseXML($xml);
         $idpInfo2 = OneLogin_Saml2_IdPMetadataParser::parseXML($xml, null, null, OneLogin_Saml2_Constants::BINDING_HTTP_POST, OneLogin_Saml2_Constants::BINDING_HTTP_POST);
         $this->assertNotEquals($expectedInfo, $idpInfo);
         $this->assertEquals($expectedInfo, $idpInfo2);
     }
-
     /**
     * Tests the parseXML method of IdPMetadataParser.
     * Case: Test all combinations of the `desiredSSOBinding` and
@@ -184,7 +179,6 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/idp_metadata2.xml');
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseXML($xml);
         $idpInfo2 = OneLogin_Saml2_IdPMetadataParser::parseXML($xml, null, null, OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT, OneLogin_Saml2_Constants::BINDING_HTTP_REDIRECT);
@@ -195,11 +189,11 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the parseXML method of IdPMetadataParser.
-    * Case: With and without specify EntityId
-    *
-    * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
-    */
+     * Tests the parseXML method of IdPMetadataParser.
+     * Case: With and without specify EntityId
+     *
+     * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
+     */
     public function testParseXMLEntityId()
     {
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/shib_metadata.xml');
@@ -239,11 +233,11 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * Tests the parseXML method of IdPMetadataParser.
-    * Case: With and without specify NameIdFormat
-    *
-    * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
-    */
+     * Tests the parseXML method of IdPMetadataParser.
+     * Case: With and without specify NameIdFormat
+     *
+     * @covers OneLogin_Saml2_IdPMetadataParser::parseXML
+     */
     public function testParseXMLNameIdFormat()
     {
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/shib_metadata.xml');
@@ -315,12 +309,10 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/idp_metadata_multi_certs.xml');
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseXML($xml);
         $this->assertEquals($expectedInfo, $idpInfo);
     }
-
     /**
     * Tests the parseXML method of IdPMetadataParser.
     * Case: IdP metadata contains multiple certs
@@ -352,7 +344,6 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-
         $xml = file_get_contents(TEST_ROOT .'/data/metadata/idp/idp_metadata_multi_signing_certs.xml');
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseXML($xml);
         $this->assertEquals($expectedInfo, $idpInfo);
@@ -380,7 +371,6 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 "NameIDFormat" => "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
             )
         );
-
         $expectedInfo2 = array(
             "idp" =>  array(
             "singleSignOnService" => array(
@@ -399,21 +389,19 @@ class OneLogin_Saml2_IdPMetadataParserTest extends PHPUnit_Framework_TestCase
                 "NameIDFormat" => "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
             )
         );
-
         $filepath = TEST_ROOT .'/data/metadata/idp/idp_metadata_same_sign_and_encrypt_cert.xml';
         $idpInfo = OneLogin_Saml2_IdPMetadataParser::parseFileXML($filepath);
         $this->assertEquals($expectedInfo, $idpInfo);
-
         $filepath2 = TEST_ROOT .'/data/metadata/idp/idp_metadata_different_sign_and_encrypt_cert.xml';
         $idpInfo2 = OneLogin_Saml2_IdPMetadataParser::parseFileXML($filepath2);
         $this->assertEquals($expectedInfo2, $idpInfo2);
     }
 
     /**
-    * Tests the injectIntoSettings method of IdPMetadataParser.
-    *
-    * @covers OneLogin_Saml2_IdPMetadataParser::injectIntoSettings
-    */
+     * Tests the injectIntoSettings method of IdPMetadataParser.
+     *
+     * @covers OneLogin_Saml2_IdPMetadataParser::injectIntoSettings
+     */
     public function testInjectIntoSettings()
     {
         $expectedMergedSettings = array(
